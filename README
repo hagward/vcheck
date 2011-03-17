@@ -1,0 +1,16 @@
+About:
+  vcheck.py was written by KTH student Anders Hagward in 2010
+  to help him practise his Japanese vocabulary. It is updated
+  sporadically.
+
+Usage:
+  python vcheck.py [flags] [dir] [filename(s)]
+  
+  where 'dir' is the name of the directory containing the text
+  files and the (optional) flags any of the ones below. If no
+  filenames specified the program will load all files in the
+  directory.
+  
+  Flags:
+    -r -- 'randomize'; test the words in random order
+    -s -- 'switch'; switch between the two languages

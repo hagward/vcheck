@@ -1,0 +1,21 @@
+-- 2011-03-16--
+* Program will assume that word file extension is '.txt' if nothing stated.
+* If no word files are specified, the program will load all the files in the specified directory.
+* No longer required to end directory name with '/'.
+* Minor aesthetic fixes.
+
+-- 2011-02-10 --
+* It's now required to pass a "working directory" parameter.
+
+-- 2010-11-07 --
+* Now also accepts directories as a vocabulary source. If given a directory, vcheck will try to load all the containing files that end with '.txt'.
+
+-- 2010-05-15 --
+* Now prints a line containing the number of words and files on startup.
+* Shows a number for every word.
+
+-- 2010-05-07 --
+* Fixed bug that occurred when guessing without having typed anything.
+
+-- 2010-04-24 --
+* Added support for multiple word files.
