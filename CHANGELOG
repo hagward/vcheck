@@ -1,4 +1,13 @@
--- 2011-03-16--
+-- 2011-03-18 --
+* Some changes to displayed text, including the usage and command information.
+* Updated the README.
+
+Code refactoring:
+* Now using format() instead of string concatenation in many places.
+* Changed a couple of function names.
+* Updated obsolete comments.
+
+-- 2011-03-17--
 * Program will assume that word file extension is '.txt' if nothing stated.
 * If no word files are specified, the program will load all the files in the specified directory.
 * No longer required to end directory name with '/'.
@@ -11,7 +20,7 @@
 * Now also accepts directories as a vocabulary source. If given a directory, vcheck will try to load all the containing files that end with '.txt'.
 
 -- 2010-05-15 --
-* Now prints a line containing the number of words and files on startup.
+* Now prints a line containing the number of words and files on start up.
 * Shows a number for every word.
 
 -- 2010-05-07 --

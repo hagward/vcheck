@@ -3,81 +3,52 @@ import os
 import random
 import sys
 
-RAND_FLAG = '-r'
-SWITCH_FLAG = '-s'
-COMM_PREFIX = '-'
-HINT_COMM = COMM_PREFIX + 's'
-ANS_COMM = COMM_PREFIX + 'a'
-HELP_COMM = COMM_PREFIX + 'h'
-QUIT_COMM = COMM_PREFIX + 'q'
+# Returns the flags, folder name and file names from argv.
+def parse_params(argv):
+    flags = []
+    filenames = []
+    i = 1
+    while i < len(argv) and argv[i].startswith('-'):
+        flags.append(argv[i])
+        i += 1
+    folder = argv[i]
+    
+    i += 1
+    while i < len(argv):
+        if '.' not in argv[i]:
+            # If no extension given, assume .txt.
+            argv[i] += '.txt'
+        filenames.append(argv[i])
+        i += 1
+    return flags, folder, filenames
 
-USAGE_STR = 'Usage: python vcheck.py [flags] [dir] [filename(s)]\n\n' \
-    'where \'dir\' is the name of the directory containing the text files and ' \
-    'the (optional) flags any of the ones below.\n\n' \
-    'Flags:\n' \
-    + RAND_FLAG + '  presents the words in random order\n' \
-    + SWITCH_FLAG + '  switches the two languages'
-
-files = 0
-
-def file_to_array(filename):
-    """Reads a text file into an array, splitting
-       at '|' and removing whitespaces."""
+# Reads a text file line by line into an array, removes leading and trailing
+# whitespaces and finally splits every line at '|'.
+def words_from_file(filename):
     words = []
     try:
         with open(filename) as file:
             for line in file:
                 words.append(line.strip().split('|'))
-        global files
-        files += 1
+        global file_count
+        file_count += 1
     except IOError:
-        print('Could not open file \'' + filename + '\'. Are you sure it ' \
-              'really exists?')
+        print('Could not open \'{0}\' for reading.'.format(filename))
     return words
 
-def folder_to_array(foldername):
+# Uses function words_from_file on every file whose name ends with '.txt' in
+# the specified folder, and returns an array of all the retrieved word pairs.
+def words_from_folder(folder):
     words = []
-    for root, dirs, filenames in os.walk(foldername):
+    for root, dirs, filenames in os.walk(folder):
         for filename in filenames:
-            ext = filename.rsplit('.', 1)
-            if len(ext) >= 2 and ext[1] == 'txt':
-                words += file_to_array(os.path.join(foldername, filename))
+            if filename.endswith('.txt'):
+                words += words_from_file(os.path.join(folder, filename))
     return words
 
-def get_params(argv):
-    """Returns the flags as a string array and
-       the filename (of the text file to be read)
-       as a string."""
-    flags = []
-    folder = ''
-    filenames = []
-    
-    i = 1
-    
-    while i < len(argv):
-        if argv[i][0] != '-':
-            break
-        else:
-            flags.append(argv[i])
-            i += 1
-    
-    folder = argv[i]
-    if not folder.endswith('/'):
-        folder += '/'
-    
-    i += 1
-    
-    while i < len(argv):
-        if '.' not in argv[i]:
-            argv[i] += '.txt'
-        filenames.append(argv[i])
-        i += 1
-    
-    return flags, folder, filenames
-
+# Takes a string s and returns a new one, where the characters from start and
+# onwards are replaced with asterisks ('*').
 def hintify(s, start):
-    """Returns the string with all its letters -
-       except the first - replaced with asterisks."""
     if start > len(s):
         start = len(s)
     output = io.StringIO()
@@ -88,58 +59,69 @@ def hintify(s, start):
     output.close()
     return ret_val
 
+RAND_FLAG = '-r'
+SWITCH_FLAG = '-s'
+COMM_PREFIX = '.'
+HINT_COMM = COMM_PREFIX + 's'
+ANS_COMM = COMM_PREFIX + 'a'
+HELP_COMM = COMM_PREFIX + 'h'
+QUIT_COMM = COMM_PREFIX + 'q'
+
+USAGE_STR = 'usage: python vcheck.py [{0}] [{1}] <dir> <filename(s)>\n\n' \
+            'explanation:\n' \
+            '   {0}            words in random order\n' \
+            '   {1}            switch between the two languages\n' \
+            '   dir           the directory containing the word files\n' \
+            '   filename(s)   the word file(s)' \
+            .format(RAND_FLAG, SWITCH_FLAG)
+COMM_STR = 'commands:\n' \
+           '   {0}   show this information\n' \
+           '   {1}   show word hint\n' \
+           '   {2}   show answer\n' \
+           '   {3}   quit' \
+           .format(HELP_COMM, HINT_COMM, ANS_COMM, QUIT_COMM)
+
 if len(sys.argv) < 2:
     sys.exit(USAGE_STR)
 
-flags, folder, filenames = get_params(sys.argv)
-
+file_count = 0
 words = []
+word_indices = [0, 1]
+flags, folder, filenames = parse_params(sys.argv)
+
 if len(filenames) < 1:
     # if no filenames are specified, load all the files in the folder
-    words = folder_to_array(folder)
+    words = words_from_folder(folder)
 else:
     for filename in filenames:
-        words += file_to_array(folder + filename)
-
-indices = [0, 1]
-
-# FLAG CODE
+        words += words_from_file(os.path.join(folder, filename))
 
 if RAND_FLAG in flags:
     random.shuffle(words)
 if SWITCH_FLAG in flags:
-    indices = [1, 0]
+    word_indices = [1, 0]
 
-print('Questioning on ' + str(len(words)) + ' words from '
-    + str(files) + ' files.')
-print('Exit by typing \'' + QUIT_COMM + '\'.')
+print('Questioning on {0} words from {1} files.' \
+      .format(len(words), file_count))
+print('To exit, type \'{0}\'.'.format(QUIT_COMM))
 
 i = 0
 for word in words:
     data = None
     hint_grade = 1
     i += 1
-    while data != word[indices[1]]:
-        data = input(str(i) + '> ' + word[indices[0]] + ': ').strip()
-        # data_cl = data.strip()
-        
+    while data != word[word_indices[1]]:
+        data = input('{0}> {1}: '.format(i, word[word_indices[0]])).strip()
         if len(data) == 0:
             continue
-        
-        # COMMAND CODE
-        
         if data == HINT_COMM:
-            print('Hint:', hintify(word[indices[1]], hint_grade))
+            print('hint:', hintify(word[word_indices[1]], hint_grade))
             hint_grade += 1
         elif data == ANS_COMM:
-            print('Answer:', word[indices[1]])
+            print('answer:', word[word_indices[1]])
             break
         elif data == HELP_COMM:
-            print('Available commands:')
-            print(HELP_COMM, '-', 'show this help information')
-            print(HINT_COMM, '-', 'show hint for a word')
-            print(ANS_COMM, '-', 'show the answer for a word')
-            print(QUIT_COMM, '-', 'quit')
+            print(COMM_STR)
         elif data == QUIT_COMM:
             sys.exit()
         elif data[0] == COMM_PREFIX:
