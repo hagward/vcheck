@@ -13,3 +13,7 @@ Usage:
   If the file extensions are omitted, vcheck will assume that they are '.txt'.
   It's also possible not to state any file names at all, as vcheck then will
   try to load all the text files in the specified directory.
+  
+  The files containing the words are as previously stated regular text files.
+  Foreign word and translation are separated with a '|'. Word pairs are
+  separated by newlines, in other words: one "word|translation" per line.

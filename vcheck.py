@@ -86,7 +86,9 @@ if len(sys.argv) < 2:
 
 file_count = 0
 words = []
-word_indices = [0, 1]
+words_to_test = []  # list with binary indicators for which words to test
+word_indices = [0, 1]  # strange array, used for language switching
+run = True
 flags, folder, filenames = parse_params(sys.argv)
 
 if len(filenames) < 1:
@@ -95,6 +97,8 @@ if len(filenames) < 1:
 else:
     for filename in filenames:
         words += words_from_file(os.path.join(folder, filename))
+
+words_to_test = [1 for i in range(0, len(words))]
 
 if RAND_FLAG in flags:
     random.shuffle(words)
@@ -105,24 +109,38 @@ print('Questioning on {0} words from {1} files.' \
       .format(len(words), file_count))
 print('To exit, type \'{0}\'.'.format(QUIT_COMM))
 
-i = 0
-for word in words:
-    data = None
-    hint_grade = 1
-    i += 1
-    while data != word[word_indices[1]]:
-        data = input('{0}> {1}: '.format(i, word[word_indices[0]])).strip()
-        if len(data) == 0:
+while run:
+    for i in range(0, len(words)):
+        if words_to_test[i] == 0:
             continue
-        if data == HINT_COMM:
-            print('hint:', hintify(word[word_indices[1]], hint_grade))
-            hint_grade += 1
-        elif data == ANS_COMM:
-            print('answer:', word[word_indices[1]])
-            break
-        elif data == HELP_COMM:
-            print(COMM_STR)
-        elif data == QUIT_COMM:
-            sys.exit()
-        elif data[0] == COMM_PREFIX:
-            print('Unknown command.')
+        data = None
+        hint_grade = 1
+        nailed_it = 0
+        while data != words[i][word_indices[1]]:
+            nailed_it += 1
+            data = input('{0}> {1}: '.format(i + 1, words[i][word_indices[0]])).strip()
+            if data == HINT_COMM:
+                print('hint:', hintify(words[i][word_indices[1]], hint_grade))
+                hint_grade += 1
+                nailed_it += i
+            elif data == ANS_COMM:
+                print('answer:', words[i][word_indices[1]])
+                nailed_it += 1
+                break
+            elif data == HELP_COMM:
+                print(COMM_STR)
+            elif data == QUIT_COMM:
+                sys.exit()
+            elif data[0] == COMM_PREFIX:
+                print('Unknown command')
+        if nailed_it < 2:
+            words_to_test[i] = 0
+    
+    if sum(words_to_test) == 0:
+        run = False
+    else:
+        data = None
+        while data != 'y':
+            data = input('Do you want to repeat the most difficult words? (y/n) ').strip()
+            if data == 'n':
+                sys.exit()

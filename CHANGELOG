@@ -1,6 +1,10 @@
+-- 2011-03-30 --
+* Added functionality for re-testing the failed words.
+* Updated README with information about the word files.
+
 -- 2011-03-18 --
 * Some changes to displayed text, including the usage and command information.
-* Updated the README.
+* Updated README.
 
 Code refactoring:
 * Now using format() instead of string concatenation in many places.
