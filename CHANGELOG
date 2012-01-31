@@ -1,3 +1,14 @@
+-- 2011-12-08 --
+* Number of correctly answered words is now _properly_ displayed.
+* Now at the start of a test tells which options (flags) the user have chosen.
+* Fixed sillyness that the program would congratulate the user even if no words could be loaded.
+
+-- 2011-11-23 --
+* Now displays the number of correctly answered words after a test.
+
+-- 2011-05-07 --
+* Fixed stupid crash when input string is empty.
+
 -- 2011-03-30 --
 * Added functionality for re-testing the failed words.
 * Updated README with information about the word files.
