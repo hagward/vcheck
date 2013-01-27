@@ -1,3 +1,7 @@
+-- 2013-01-27 --
+* Added '.left' command to see how many words are left.
+* Some minor text changes.
+
 -- 2011-12-08 --
 * Number of correctly answered words is now _properly_ displayed.
 * Now at the start of a test tells which options (flags) the user have chosen.

@@ -64,22 +64,24 @@ SWITCH_FLAG = '-s'
 COMM_PREFIX = '.'
 HINT_COMM = COMM_PREFIX + 's'
 ANS_COMM = COMM_PREFIX + 'a'
-HELP_COMM = COMM_PREFIX + 'h'
-QUIT_COMM = COMM_PREFIX + 'q'
+LEFT_COMM = COMM_PREFIX + 'left'
+HELP_COMM = COMM_PREFIX + 'help'
+QUIT_COMM = COMM_PREFIX + 'quit'
 
-USAGE_STR = 'usage: python vcheck.py [{0}] [{1}] <dir> <filename(s)>\n\n' \
-            'explanation:\n' \
+USAGE_STR = 'Usage: python vcheck.py [-flags] <dir> <filename(s)>\n\n' \
+            'Explanation:\n' \
             '   {0}            words in random order\n' \
             '   {1}            switch between the two languages\n' \
             '   dir           the directory containing the word files\n' \
             '   filename(s)   the word file(s)' \
             .format(RAND_FLAG, SWITCH_FLAG)
-COMM_STR = 'commands:\n' \
-           '   {0}   show this information\n' \
-           '   {1}   show word hint\n' \
-           '   {2}   show answer\n' \
-           '   {3}   quit' \
-           .format(HELP_COMM, HINT_COMM, ANS_COMM, QUIT_COMM)
+COMM_STR = 'Commands:\n' \
+           '   {0}	show this information\n' \
+           '   {1}		show word hint\n' \
+           '   {2}		show answer\n' \
+           '   {3}	display the number of words left\n' \
+           '   {4}	quit the program' \
+           .format(HELP_COMM, HINT_COMM, ANS_COMM, LEFT_COMM, QUIT_COMM)
 
 if len(sys.argv) < 2:
     sys.exit(USAGE_STR)
@@ -115,33 +117,37 @@ print('To exit, type \'{0}\'.'.format(QUIT_COMM))
 
 while run:
     total_words_to_test = sum(words_to_test)
+    words_left = total_words_to_test
     for i in range(0, len(words)):
         if words_to_test[i] == 0:
             continue
         data = None
         hint_grade = 1
-        nailed_it = 0  # 0 means that it was correct
+        incorrectness = 0  # 0 means that it was correct
         while data != words[i][word_indices[1]]:
-            nailed_it += 1
+            incorrectness += 1
             data = input('{0}> {1}: '.format(i + 1, words[i][word_indices[0]])).strip()
             if len(data) == 0:
                 continue
             elif data == HINT_COMM:
                 print('hint:', hintify(words[i][word_indices[1]], hint_grade))
                 hint_grade += 1
-                nailed_it += i
+                incorrectness += i
             elif data == ANS_COMM:
                 print('answer:', words[i][word_indices[1]])
-                nailed_it += 1
+                incorrectness += 1
                 break
+            elif data == LEFT_COMM:
+                print(words_left, 'words left')
             elif data == HELP_COMM:
                 print(COMM_STR)
             elif data == QUIT_COMM:
                 sys.exit()
             elif data[0] == COMM_PREFIX:
                 print('Unknown command')
-        if nailed_it < 2:
+        if incorrectness < 2:
             words_to_test[i] = 0
+        words_left -= 1
     
     if sum(words_to_test) == 0:
         if len(words_to_test) > 0:
