@@ -1,3 +1,7 @@
+-- 2013-03-20 --
+* Changed to using Python's argparse functions for command line arguments.
+* Removed the possibility to load files recursively.
+
 -- 2013-01-27 --
 * Added '.left' command to see how many words are left.
 * Some minor text changes.

@@ -1,19 +1,25 @@
 About:
+
   vcheck.py was written by KTH student Anders Hagward in 2010 to assist him in
   his learning of Japanese vocabulary. It is updated sporadically.
 
 Usage:
-  python vcheck.py [-r] [-s] <dir> <filename(s)>
-  
-  -r            show the words in random order
-  -s            switch between the two languages
-  dir           the name of the directory containing the word files
-  filename(s)   the name(s) of the word file(s)
-  
-  If the file extensions are omitted, vcheck will assume that they are '.txt'.
-  It's also possible not to state any file names at all, as vcheck then will
-  try to load all the text files in the specified directory.
-  
-  The files containing the words are as previously stated regular text files.
-  Foreign word and translation are separated with a '|'. Word pairs are
-  separated by newlines, in other words: one "word|translation" per line.
+
+  vcheck.py [-h] [-d [dir]] [-rand] [-switch] [filename [filename ...]]
+
+  positional arguments:
+    filename    name of the word file
+
+  optional arguments:
+    -h, --help  show this help message and exit
+    -d [dir]    the directory to look for the word file(s)
+    -rand       randomize the word list
+    -switch     switch the two languages
+
+    If the file extensions are omitted, vcheck will assume that they are '.txt'.
+    It is also possible to not state any filenames at all, as vcheck then will
+    try to load all the text files in the current, or specified, directory.
+
+    The files containing the words are as previously stated regular text files.
+    The foreign word and its translation are separated with a '|'. Word pairs
+    are separated by newlines, i.e. one "word|translation" per line.

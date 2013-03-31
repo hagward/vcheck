@@ -1,7 +1,15 @@
-﻿import io
+﻿import argparse
+import io
 import os
 import random
 import sys
+
+parser = argparse.ArgumentParser(description='vcheck.py helps you remembering the vocabulary by questioning you on a predetermined word list.')
+parser.add_argument('filenames', metavar='filename', nargs='*', help='name of the word file')
+parser.add_argument('-d', metavar='dir', nargs='?', default='.', help='the directory to look for the word file(s)')
+parser.add_argument('-rand', action='store_true', help='randomize the word list')
+parser.add_argument('-switch', action='store_true', help='switch the two languages')
+args = parser.parse_args()
 
 # Returns the flags, folder name and file names from argv.
 def parse_params(argv):
@@ -40,10 +48,9 @@ def words_from_file(filename):
 # the specified folder, and returns an array of all the retrieved word pairs.
 def words_from_folder(folder):
     words = []
-    for root, dirs, filenames in os.walk(folder):
-        for filename in filenames:
-            if filename.endswith('.txt'):
-                words += words_from_file(os.path.join(folder, filename))
+    for filename in os.listdir(folder):
+        if filename.endswith('.txt'):
+            words += words_from_file(os.path.join(folder, filename))
     return words
 
 # Takes a string s and returns a new one, where the characters from start and
@@ -59,8 +66,7 @@ def hintify(s, start):
     output.close()
     return ret_val
 
-RAND_FLAG = '-r'
-SWITCH_FLAG = '-s'
+# Command options.
 COMM_PREFIX = '.'
 HINT_COMM = COMM_PREFIX + 's'
 ANS_COMM = COMM_PREFIX + 'a'
@@ -68,13 +74,6 @@ LEFT_COMM = COMM_PREFIX + 'left'
 HELP_COMM = COMM_PREFIX + 'help'
 QUIT_COMM = COMM_PREFIX + 'quit'
 
-USAGE_STR = 'Usage: python vcheck.py [-flags] <dir> <filename(s)>\n\n' \
-            'Explanation:\n' \
-            '   {0}            words in random order\n' \
-            '   {1}            switch between the two languages\n' \
-            '   dir           the directory containing the word files\n' \
-            '   filename(s)   the word file(s)' \
-            .format(RAND_FLAG, SWITCH_FLAG)
 COMM_STR = 'Commands:\n' \
            '   {0}	show this information\n' \
            '   {1}		show word hint\n' \
@@ -83,31 +82,28 @@ COMM_STR = 'Commands:\n' \
            '   {4}	quit the program' \
            .format(HELP_COMM, HINT_COMM, ANS_COMM, LEFT_COMM, QUIT_COMM)
 
-if len(sys.argv) < 2:
-    sys.exit(USAGE_STR)
-
 file_count = 0
 words = []
 words_to_test = []  # list with binary indicators for which words to test
 word_indices = [0, 1]  # strange array, used for language switching
 run = True
-flags, folder, filenames = parse_params(sys.argv)
 
-if len(filenames) < 1:
-    # if no filenames are specified, load all the files in the folder
-    words = words_from_folder(folder)
+# If no filenames are provided, load all the files in the specified (or
+# default) directory.
+if len(args.filenames) == 0:
+    words = words_from_folder(args.d)
 else:
-    for filename in filenames:
-        words += words_from_file(os.path.join(folder, filename))
+    for filename in args.filenames:
+        words += words_from_file(os.path.join(args.d, filename))
 
 words_to_test = [1 for i in range(0, len(words))]
 
 rand_str = ''
 switch_str = ''
-if RAND_FLAG in flags:
+if args.rand:
     random.shuffle(words)
     rand_str = ' in random order'
-if SWITCH_FLAG in flags:
+if args.switch:
     word_indices = [1, 0]
     switch_str = ' with languages switched'
 
