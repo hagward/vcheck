@@ -1,0 +1,13 @@
+.dangerous|farlig
+insidious|illslug,.durkdriven
+pig|gris,svin
+bread|bröd
+dead|död
+jump|hoppa
+snigel
+old|gammal|sork
+||||||
+|
+|gurka
+cucumber|hej,
+dead|död,körd
