@@ -1,9 +1,8 @@
+from config import config
+
 class FileParser:
 
     def __init__(self):
-        self.lang_separator = '|'
-        self.word_separator = ','
-        self.command_prefix = '.'
         self.words = dict()
 
     def _add_word(self, word, translations):
@@ -13,25 +12,25 @@ class FileParser:
         self.words[word] = translations
 
     def _parse_line(self, line):
-        line = line.strip().split(self.lang_separator)
+        line = line.strip().split(config['lang_separator'])
 
         if len(line) < 2:
             raise Exception("missing language separator '{0}'"
-                            .format(self.lang_separator))
+                            .format(config['lang_separator']))
         elif len(line) > 2:
             raise Exception("too many language separators '{0}'"
-                            .format(self.lang_separator))
+                            .format(config['lang_separator']))
 
         word = line[0]
-        translations = line[1].split(self.word_separator)
+        translations = line[1].split(config['word_separator'])
 
         if len(word) == 0 or any(map(lambda x: len(x) == 0, translations)):
             raise Exception('words cannot be empty')
-        elif (word.startswith(self.command_prefix) or
-              any(map(lambda x: x.startswith(self.command_prefix),
+        elif (word.startswith(config['command_prefix']) or
+              any(map(lambda x: x.startswith(config['command_prefix']),
               translations))):
             raise Exception("words cannot start with command prefix '{0}'"
-                            .format(self.command_prefix))
+                            .format(config['command_prefix']))
 
         return word, translations
 
@@ -46,7 +45,3 @@ class FileParser:
 
     def get_words(self):
         return self.words
-
-fp = FileParser()
-fp.load_file('D:/Dropbox/misc/witcher-words.txt')
-print(fp.get_words())
