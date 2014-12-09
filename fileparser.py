@@ -25,11 +25,11 @@ class FileParser:
         translations = line[1].split(config['word_separator'])
 
         if len(word) == 0 or any(map(lambda x: len(x) == 0, translations)):
-            raise Exception('words cannot be empty')
+            raise Exception('word cannot be empty')
         elif (word.startswith(config['command_prefix']) or
               any(map(lambda x: x.startswith(config['command_prefix']),
               translations))):
-            raise Exception("words cannot start with command prefix '{0}'"
+            raise Exception("word cannot start with command prefix '{0}'"
                             .format(config['command_prefix']))
 
         return word, translations
@@ -41,7 +41,7 @@ class FileParser:
                     word, translations = self._parse_line(line)
                     self._add_word(word, translations)
                 except Exception as e:
-                    print('{0},{1}: {2}'.format(filename, i+1, e))
+                    print('{0}:{1}: warning: {2}'.format(filename, i+1, e))
 
     def get_words(self):
         return self.words
