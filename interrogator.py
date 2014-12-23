@@ -35,16 +35,21 @@ class Interrogator:
             return (self.Actions.CORRECT_GUESS if line in self.words[word] else
                     self.Actions.INCORRECT_GUESS)
 
+    def has_words(self):
+        return len(self.words) > 0
+
+    def get_num_words(self):
+        return len(self.words)
+
     def interrogate(self):
-        while len(self.words) > 0:
-            passed_words = set()
-            for i, word in enumerate(iter(self.words)):
-                action = self.Actions.INCORRECT_GUESS
-                while (action != self.Actions.CORRECT_GUESS and
-                       action != self.Actions.SHOW_WORD):
-                    line = input('{0}> {1}: '.format(i+1, word))
-                    action = self._parse_input(word, line)
-                if action == self.Actions.CORRECT_GUESS:
-                    passed_words.add(word)
-            for word in iter(passed_words):
-                del self.words[word]
+        passed_words = set()
+        for i, word in enumerate(iter(self.words)):
+            action = self.Actions.INCORRECT_GUESS
+            while (action != self.Actions.CORRECT_GUESS and
+                   action != self.Actions.SHOW_WORD):
+                line = input('{0}> {1}: '.format(i+1, word))
+                action = self._parse_input(word, line)
+            if action == self.Actions.CORRECT_GUESS:
+                passed_words.add(word)
+        for word in iter(passed_words):
+            del self.words[word]

@@ -15,7 +15,15 @@ if __name__ == '__main__':
         parser.load_file(filename)
     interrogator = Interrogator(parser.get_words())
 
-    print('read {0} word(s) from {1} file(s)'.format(len(parser.get_words()),
-                                                     len(args.filename)))
+    print('read {0} word{2} from {1} file{3}'
+          .format(len(parser.get_words()),
+                  len(args.filename),
+                  's' if len(parser.get_words()) > 1 else '',
+                  's' if len(args.filename) > 1 else ''))
 
     interrogator.interrogate()
+    while interrogator.has_words():
+        print('questioning on remaining {0} word{1}'
+              .format(interrogator.get_num_words(),
+                      's' if interrogator.get_num_words() > 1 else ''))
+        interrogator.interrogate()
