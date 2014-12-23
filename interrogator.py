@@ -11,6 +11,7 @@ class Interrogator:
         self.words = words
         self.commands = {
             'show': self._command_show,
+            'pass': self._command_pass,
             'quit': self._command_quit
         }
 
@@ -23,6 +24,9 @@ class Interrogator:
 
     def _command_show(self, current_word):
         print('answer:', ', '.join(self.words[current_word]))
+        return self.Actions.SHOW_WORD
+
+    def _command_pass(self, current_word):
         return self.Actions.SHOW_WORD
 
     def _command_quit(self, current_word):
