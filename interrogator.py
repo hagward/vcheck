@@ -10,10 +10,17 @@ class Interrogator:
     def __init__(self, words):
         self.words = words
         self.commands = {
-            'show': self._command_show,
+            'help': self._command_help,
             'pass': self._command_pass,
-            'quit': self._command_quit
+            'quit': self._command_quit,
+            'show': self._command_show
         }
+        self.command_help = [
+            ('help', 'show this help text'),
+            ('pass', 'pass word without showing it'),
+            ('quit', 'quit program without prompt'),
+            ('show', 'pass and show word')
+        ]
 
     def _execute_command(self, command_name, current_word):
         if command_name not in self.commands:
@@ -22,15 +29,21 @@ class Interrogator:
         else:
             return self.commands[command_name](current_word)
 
-    def _command_show(self, current_word):
-        print('answer:', ', '.join(self.words[current_word]))
-        return self.Actions.SHOW_WORD
+    def _command_help(self, current_word):
+        print('Available commands:')
+        for (command, description) in self.command_help:
+            print("'{0}{1}': {2}"
+                  .format(config['command_prefix'], command, description))
 
     def _command_pass(self, current_word):
         return self.Actions.SHOW_WORD
 
     def _command_quit(self, current_word):
         sys.exit()
+
+    def _command_show(self, current_word):
+        print('answer:', ', '.join(self.words[current_word]))
+        return self.Actions.SHOW_WORD
 
     def _parse_input(self, word, line):
         if line.startswith(config['command_prefix']):
@@ -51,7 +64,8 @@ class Interrogator:
             action = self.Actions.INCORRECT_GUESS
             while (action != self.Actions.CORRECT_GUESS and
                    action != self.Actions.SHOW_WORD):
-                line = input('{0}> {1}: '.format(i+1, word))
+                line = input('({0}/{1}) {2}: '
+                             .format(i+1, len(self.words), word))
                 action = self._parse_input(word, line)
             if action == self.Actions.CORRECT_GUESS:
                 passed_words.add(word)
