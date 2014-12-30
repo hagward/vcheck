@@ -5,7 +5,7 @@ from enum import Enum
 
 class Interrogator:
 
-    Actions = Enum('Actions', 'INCORRECT_GUESS CORRECT_GUESS SHOW_WORD NOOP')
+    Actions = Enum('Actions', 'INCORRECT_ANSWER CORRECT_ANSWER SHOW_WORD NOOP')
 
     def __init__(self, words):
         self.words = words
@@ -49,8 +49,20 @@ class Interrogator:
         if line.startswith(config['command_prefix']):
             return self._execute_command(line[1:], word)
         else:
-            return (self.Actions.CORRECT_GUESS if line in self.words[word] else
-                    self.Actions.INCORRECT_GUESS)
+            words = set(self.words[word])
+            answers = set(line.split(config['word_separator']))
+            correct = answers & words
+            incorrect = answers - words
+            missing = words - answers
+            if len(correct) > 0:
+                if len(incorrect) > 0:
+                    print('the following answers were incorrect:',
+                          ', '.join(incorrect))
+                if len(missing) > 0:
+                    print('other translations are:', ', '.join(missing))
+                return self.Actions.CORRECT_ANSWER
+            else:
+                return self.Actions.INCORRECT_ANSWER
 
     def has_words(self):
         return len(self.words) > 0
@@ -61,13 +73,13 @@ class Interrogator:
     def interrogate(self):
         passed_words = set()
         for i, word in enumerate(iter(self.words)):
-            action = self.Actions.INCORRECT_GUESS
-            while (action != self.Actions.CORRECT_GUESS and
+            action = self.Actions.INCORRECT_ANSWER
+            while (action != self.Actions.CORRECT_ANSWER and
                    action != self.Actions.SHOW_WORD):
                 line = input('({0}/{1}) {2}: '
                              .format(i+1, len(self.words), word))
                 action = self._parse_input(word, line)
-            if action == self.Actions.CORRECT_GUESS:
+            if action == self.Actions.CORRECT_ANSWER:
                 passed_words.add(word)
         for word in iter(passed_words):
             del self.words[word]
