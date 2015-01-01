@@ -8,7 +8,6 @@ class FileParser:
     def _add_word(self, word, translations):
         if word in self.words:
             raise Exception("duplicate word entry '{0}'".format(word))
-
         self.words[word] = translations
 
     def _parse_line(self, line):
@@ -21,24 +20,30 @@ class FileParser:
             raise Exception("too many language separators '{0}'"
                             .format(config['lang_separator']))
 
-        word = line[0]
-        translations = line[1].split(config['word_separator'])
+        line[0] = line[0].split(config['word_separator'])
+        line[1] = line[1].split(config['word_separator'])
 
-        if len(word) == 0 or any(map(lambda x: len(x) == 0, translations)):
-            raise Exception('word cannot be empty')
-        elif (word.startswith(config['command_prefix']) or
+        if (len(line[0]) == 0 or any(map(lambda x: len(x) == 0, line[0])) or
+            len(line[1]) == 0 or any(map(lambda x: len(x) == 0, line[1]))):
+            raise Exception('empty word')
+        elif (any(map(lambda x: x.startswith(config['command_prefix']),
+                      line[0])) or
               any(map(lambda x: x.startswith(config['command_prefix']),
-              translations))):
-            raise Exception("word cannot start with command prefix '{0}'"
+                      line[1]))):
+            raise Exception("words cannot start with command prefix '{0}'"
                             .format(config['command_prefix']))
 
-        return word, translations
+        return line[0], line[1]
 
-    def load_file(self, filename):
+    def load_file(self, filename, flip_languages):
         with open(filename, encoding='utf8') as file:
             for i, line in enumerate(file):
                 try:
-                    word, translations = self._parse_line(line)
+                    if flip_languages:
+                        translations, word = self._parse_line(line)
+                    else:
+                        word, translations = self._parse_line(line)
+                    word = ', '.join(word)
                     self._add_word(word, translations)
                 except Exception as e:
                     print('{0}:{1}: warning: {2}'.format(filename, i+1, e))

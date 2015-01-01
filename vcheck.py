@@ -7,12 +7,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Improve your vocabulary.')
     parser.add_argument('filename', nargs='+',
                         help='name of the file containing the vocabulary')
+    parser.add_argument('--flip', dest='flip', action='store_const',
+                        const=True, default=False,
+                        help='flip the two languages')
 
     args = parser.parse_args()
 
     parser = FileParser()
     for filename in args.filename:
-        parser.load_file(filename)
+        parser.load_file(filename, args.flip)
     interrogator = Interrogator(parser.get_words())
 
     print('read {0} word{2} from {1} file{3}'

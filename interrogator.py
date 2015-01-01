@@ -30,7 +30,7 @@ class Interrogator:
             return self.commands[command_name](current_word)
 
     def _command_help(self, current_word):
-        print('Available commands:')
+        print('available commands:')
         for (command, description) in self.command_help:
             print("'{0}{1}': {2}"
                   .format(config['command_prefix'], command, description))
