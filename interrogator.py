@@ -49,7 +49,7 @@ class Interrogator:
             return self._execute_command(line[1:], word)
         else:
             words = set(self.words[word])
-            answers = set(line.split(config['word_separator']))
+            answers = set(map(str.strip, line.split(config['word_separator'])))
             correct = answers & words
             incorrect = answers - words
             missing = words - answers
