@@ -1,9 +1,10 @@
+from collections import OrderedDict
 from config import config
 
 class FileParser:
 
     def __init__(self):
-        self.words = dict()
+        self.words = OrderedDict()
 
     def _add_word(self, word, translations):
         if word in self.words:

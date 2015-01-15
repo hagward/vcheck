@@ -1,5 +1,4 @@
 import argparse
-
 from fileparser import FileParser
 from interrogator import Interrogator
 
@@ -18,7 +17,7 @@ if __name__ == '__main__':
         parser.load_file(filename, args.flip)
     interrogator = Interrogator(parser.get_words())
 
-    print('read {0} word{2} from {1} file{3}'
+    print('Read {0} word{2} from {1} file{3}.'
           .format(len(parser.get_words()),
                   len(args.filename),
                   's' if len(parser.get_words()) > 1 else '',
@@ -26,7 +25,7 @@ if __name__ == '__main__':
 
     interrogator.interrogate()
     while interrogator.has_words():
-        print('questioning on remaining {0} word{1}'
+        print('Questioning on remaining {0} word{1}.'
               .format(interrogator.get_num_words(),
                       's' if interrogator.get_num_words() > 1 else ''))
         interrogator.interrogate()

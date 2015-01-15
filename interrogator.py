@@ -1,5 +1,4 @@
 import sys
-
 from config import config
 from enum import Enum
 
@@ -24,13 +23,13 @@ class Interrogator:
 
     def _execute_command(self, command_name, current_word):
         if command_name not in self.commands:
-            print('unknown command')
+            print('Unknown command.')
             return self.Actions.NOOP
         else:
             return self.commands[command_name](current_word)
 
     def _command_help(self, current_word):
-        print('available commands:')
+        print('Available commands:')
         for (command, description) in self.command_help:
             print("'{0}{1}': {2}"
                   .format(config['command_prefix'], command, description))
@@ -42,7 +41,7 @@ class Interrogator:
         sys.exit()
 
     def _command_show(self, current_word):
-        print('answer:', ', '.join(self.words[current_word]))
+        print('Answer:', ', '.join(self.words[current_word]))
         return self.Actions.SHOW_WORD
 
     def _parse_input(self, word, line):
@@ -56,10 +55,10 @@ class Interrogator:
             missing = words - answers
             if len(correct) > 0:
                 if len(incorrect) > 0:
-                    print('the following answers were incorrect:',
+                    print('The following answers were incorrect:',
                           ', '.join(incorrect))
                 if len(missing) > 0:
-                    print('other translations are:', ', '.join(missing))
+                    print('Additional translations:', ', '.join(missing))
                 return self.Actions.CORRECT_ANSWER
             else:
                 return self.Actions.INCORRECT_ANSWER
