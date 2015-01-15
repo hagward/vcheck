@@ -36,9 +36,11 @@ class FileParser:
 
         return line[0], line[1]
 
-    def load_file(self, filename, flip_languages):
+    def parse_file(self, filename, start=0, nwords=0, flip_languages=False):
         with open(filename, encoding='utf8') as file:
             for i, line in enumerate(file):
+                if i < start: continue
+                if nwords > 0 and i - start == nwords: break
                 try:
                     if flip_languages:
                         translations, word = self._parse_line(line)
