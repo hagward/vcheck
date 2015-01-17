@@ -3,8 +3,8 @@ from config import config
 
 class FileParser:
 
-    def __init__(self):
-        self.words = OrderedDict()
+    def __init__(self, shuffle=False):
+        self.words = dict() if shuffle else OrderedDict()
 
     def _add_word(self, word, translations):
         if word in self.words:
@@ -36,13 +36,13 @@ class FileParser:
 
         return line[0], line[1]
 
-    def parse_file(self, filename, start=0, nwords=0, flip_languages=False):
+    def parse_file(self, filename, flip_lang=False, start=0, nwords=0):
         with open(filename, encoding='utf8') as file:
             for i, line in enumerate(file):
                 if i < start: continue
                 if nwords > 0 and i - start == nwords: break
                 try:
-                    if flip_languages:
+                    if flip_lang:
                         translations, word = self._parse_line(line)
                     else:
                         word, translations = self._parse_line(line)
